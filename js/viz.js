@@ -17,8 +17,8 @@ var colorScale = d3.scaleThreshold()
 
 // Load external data and boot
 d3.queue()
-  .defer(d3.json, "boyaca_simply.json")
-  .defer(d3.csv, "boyaca.csv", function(d) { data.set(d.code, +d.pop); })
+  .defer(d3.json, "data/boyaca_simply.json")
+  .defer(d3.csv, "data/boyaca.csv", function(d) { data.set(d.code, +d.pop); })
   .await(ready);
 
 function ready(error, topo) {
