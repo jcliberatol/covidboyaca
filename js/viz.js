@@ -18,11 +18,12 @@ var colorScale = d3.scaleThreshold()
 // Load external data and boot
 d3.queue()
   .defer(d3.json, "boyaca_simply.json")
-  .defer(d3.csv, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv", function(d) { data.set(d.code, +d.pop); })
+  .defer(d3.csv, "boyaca.csv", function(d) { data.set(d.code, +d.pop); })
   .await(ready);
 
 function ready(error, topo) {
-
+    console.log(topo)
+    console.log(data)
   // Draw the map
   svg.append("g")
     .selectAll("path")
