@@ -39,5 +39,3 @@ function ready(error, topo) {
         return colorScale(d.total);
       });
     }
-
-</script>
