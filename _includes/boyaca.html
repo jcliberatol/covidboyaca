@@ -11,18 +11,27 @@
 <script src="https://d3js.org/d3.v4.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dc/4.2.0/dc.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.5.4/crossfilter.js"></script>
+
+
+
+
+
 
 <!-- Create an element where the map will take place -->
 
 
   <link rel="stylesheet" href="css/styles.css">
 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dc/4.2.0/style/dc.css">
+
 </head>
 
 <body>
-<div class="widget maptype">
+<div class="maptype">
   <input type="radio" id="bcases" name="status" value="cases" checked="checked">
-  <label for="bcases">Total</label>
+  <label for="bcases">Total</label><br>
   <input type="radio" id="bdeath" name="status" value="death">
   <label for="bdeath"># Muertos</label>
   <input type="radio" id="bactive" name="status" value="active">
@@ -37,23 +46,24 @@
 
 </div>
 
-<div class="widget">
+<div class="">
 <svg id="mapsvg"></svg>
 </div>
-<div class="widget">
-  Male / Female Distribution
+<div class="widget simpl">
+  <h4>Género</h4>
+  <div id="mfchart"></div>
+</div>
+<div class="widget simpl">
+  <h4>Severidad</h4>
+  <div id="severechart"></div>
+</div>
+<div class="widget simpl">
+  <h4>Tipo Atención</h4>
+  <div id="recchart"></div>
 </div>
 <div class="widget">
-  Series of cases/recovered/deaths
-</div>
-<div class="widget">
-  Case distribution by mild / severe
-</div>
-<div class="widget">
-  Town detail widget
-</div>
-<div class="widget">
-  Recovery type
+  <div id="crdserieschart"></div>
+
 </div>
   <script src="js/viz.js"></script>
 </body>

@@ -4,3 +4,25 @@
     font-weight: 600;
     text-shadow: 0 0 3px white,0 0 3px white;
 }
+
+text.row {
+    font-family: sans-serif;
+    font-weight: 600 !important;
+    font-size: 15px !important;
+    fill: BLACK !important;
+    text-shadow: 0 0 5px white;
+}
+
+.widget.simpl {
+    display: inline-block;
+}
+
+.widget {
+    padding: 5px;
+    box-shadow: 1px 1px 3px #0000004d;
+    margin: 8px;
+}
+
+body {
+    font-family: sans-serif;
+}

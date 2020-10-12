@@ -3,7 +3,27 @@ function capitalizeFirstLetter(string) {
     string = string.toLowerCase();
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+                function remove_empty_bins(source_group) {
+    return {
+        all:function () {
+            return source_group.all().filter(function(d) {
+                return d.value != 0;
+            });
+        }
+    };
+}
 
+                function remove_nameless_bins(source_group) {
+    return {
+        all:function () {
+            return source_group.all().filter(function(d) {
+                console.log(d.key)
+                return d.key != "";
+            });
+        },
+        size: source_group.size
+    };
+}
 // Data and color scale
 
 var rawData = [];
@@ -21,6 +41,82 @@ function ready(error, topo) {
 
     console.log(topo)
     console.log(rawData);
+
+    //Dashboard
+
+    var recchart = new dc.RowChart("#recchart")
+    var mfchart = new dc.RowChart("#mfchart")
+    var severechart = new dc.RowChart("#severechart")
+    var crdserieschart = new dc.SeriesChart("#crdserieschart")
+    const dateFormatSpecifier = '%Y-%m-%dT%H:%M:%S.%L';
+    const dateFormat = d3.timeFormat(dateFormatSpecifier);
+    const dateFormatParser = d3.timeParse(dateFormatSpecifier);
+
+    rawData.forEach(d=>{
+        d.dateFIS = dateFormatParser(d["FIS"])
+        d.datemort = dateFormatParser(d["Fecha de muerte"])
+        d.datenot = dateFormatParser(d["Fecha de notificación"])
+        d.datediag = dateFormatParser(d["Fecha diagnostico"])
+        d.daterec = dateFormatParser(d["Fecha recuperado"])
+        d.dateweb = dateFormatParser(d["fecha reporte web"])
+        d.gender = d["Sexo"]=="M"?"Hombre":"Mujer";
+    })
+    const ndx = crossfilter(rawData);
+    const all = ndx.groupAll();
+    console.log(ndx)
+    var mfdim = ndx.dimension(d => d.gender)
+    var mfg = mfdim.group();
+
+     mfchart
+        .width(180)
+        .height(180)
+        .margins({top: 20, left: 10, right: 10, bottom: 20})
+        .group(mfg)
+        .dimension(mfdim)
+        .ordinalColors(['#01c5c4', '#b8de6f'])
+        .label(d => d.key +" "+ (Math.round(d.value/ndx.allFiltered().length *10000)/100 + "%"))
+        .title(d => d.value)
+        .elasticX(true)
+        .xAxis().ticks(4);
+    mfchart.render();
+
+    var severechartdim = ndx.dimension(d => d["Estado"].toUpperCase())
+    var severechartg = remove_nameless_bins(severechartdim.group());
+
+    console.log(ndx.allFiltered().length)
+
+     severechart
+        .width(180)
+        .height(180)
+        .margins({top: 20, left: 10, right: 10, bottom: 20})
+        .group(severechartg)
+        .dimension(severechartdim)
+        .ordinalColors(['#01c5c4','#b8de6f',"#f1e189","#f39233","#794c74","#c56183"])
+        .label(d => d.key +" "+ (Math.round(d.value/ndx.allFiltered().length *10000)/100 + "%"))
+        .title(d => d.value)
+        .elasticX(true)
+        .xAxis().ticks(4);
+    severechart.render();
+
+    var recchartdim = ndx.dimension(d => d["atención"].toUpperCase())
+    var recchartg = remove_nameless_bins(recchartdim.group());
+
+     recchart
+        .width(180)
+        .height(180)
+        .margins({top: 20, left: 10, right: 10, bottom: 20})
+        .group(recchartg)
+        .dimension(recchartdim)
+        .ordinalColors(['#01c5c4','#b8de6f',"#f1e189","#f39233","#794c74","#c56183"])
+        .label(d => d.key +" "+ (Math.round(d.value/ndx.allFiltered().length *10000)/100 + "%"))
+        .title(d => d.value)
+        .elasticX(true)
+        .xAxis().ticks(4);
+    recchart.render();
+
+    //Map
+
+
     var datadic = {};
     for (i = 0; i < rawData.length; i++) {
         var dt = rawData[i];
@@ -115,7 +211,6 @@ function ready(error, topo) {
                 d.past = dataPoint.cases - d.active
                 d.recoverrate = d.past > 0 ? (Math.pow(d.past / d.cases, 3) * 1000) + 1 : 0;
                 d.deathrate = dataPoint.death > 0 ? (Math.pow((dataPoint.death) / (d.past), 3) * 1000) + 1 : 0;
-                console.log(d.recoverrate)
                 d.death = dataPoint.death
                 return colorScale(d[vtype]);
             }).on("mouseenter", handleMouseOver)
@@ -126,7 +221,7 @@ function ready(error, topo) {
             d3.select(this).attr("stroke", "black");
             let pt = this;
             var fsize = width > 600 ? "20px" : "12px"
-            var spacing = width > 600 ? 20 : 12 "
+            var spacing = width > 600 ? 20 : 12 ;
             var centr = mypath.centroid(d)
             // Specify where to put label of text
             //console.log(this,d,i,mypath,centr);
