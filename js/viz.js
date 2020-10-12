@@ -122,6 +122,7 @@ function ready(error, topo) {
         // Use D3 to select element, change color and size
         d3.select(this).attr("stroke", "black");
         let pt = this;
+        var fsize = width > 600 ? "20px":"12px"
         var centr = mypath.centroid(d)
         // Specify where to put label of text
         //console.log(this,d,i,mypath,centr);
@@ -129,7 +130,7 @@ function ready(error, topo) {
         el.attr("id", "textTown" + "-" + i)
         el.attr("x", centr[0])
         el.attr("y", centr[1]).attr("text-anchor", "middle")
-            .attr("font-size", "20px").attr("pointer-events", "none")
+            .attr("font-size", fsize).attr("pointer-events", "none")
         //Sconsole.log(el)
         el.text(function() {
             return capitalizeFirstLetter(d.properties["MPIO_CNMBR"]);
@@ -138,7 +139,7 @@ function ready(error, topo) {
         el2.attr("id", "textTown2" + "-" + i)
         el2.attr("x", centr[0])
         el2.attr("y", centr[1]+25).attr("text-anchor", "middle")
-            .attr("font-size", "20px").attr("pointer-events", "none")
+            .attr("font-size", fsize).attr("pointer-events", "none")
         //Sconsole.log(el)
         el2.text(function() {
             return ("Casos:" + d.cases + " Activos: "+d.active+" Muertes: "+d.death+"");
@@ -147,7 +148,7 @@ function ready(error, topo) {
         el3.attr("id", "textTown3" + "-" + i)
         el3.attr("x", centr[0])
         el3.attr("y", centr[1]+50).attr("text-anchor", "middle")
-            .attr("font-size", width > 600 ? "20px":"12px").attr("pointer-events", "none")
+            .attr("font-size", fsize).attr("pointer-events", "none")
         //Sconsole.log(el)
         el3.text(function() {
             return ("Activos:" + (d.cases>0?Math.round((d.active/d.cases)*100*100)/100:0) +"% Muertes: "+(d.past>0?Math.round(d.death/d.past*100*100)/100:0)+"%");
