@@ -20,8 +20,40 @@
 </head>
 
 <body>
+<div class="widget maptype">
+  <input type="radio" id="bdeath" name="status" value="death">
+  <label for="bdeath">Muertos</label><br>
+  <input type="radio" id="bactive" name="status" value="active">
+  <label for="bactive">Activos</label><br>
+  <input type="radio" id="brecover" name="status" value="recover">
+  <label for="brecover">Recuperados</label><br>
+  <input type="radio" id="bcases" name="status" value="cases" checked="checked">
+  <label for="bcases">Total</label>
+  <input type="radio" id="brecoverrate" name="status" value="recoverrate">
+  <label for="brecoverrate">Tasa de Recuperación</label><br>
+  <input type="radio" id="bdeathrate" name="status" value="deathrate">
+  <label for="bdeathrate">Tasa de Muerte</label><br>
 
-<svg id="my_dataviz" width="800" height="600"></svg>
+</div>
+
+<div class="widget">
+<svg id="mapsvg"></svg>
+</div>
+<div class="widget">
+  Male / Female Distribution
+</div>
+<div class="widget">
+  Series of cases/recovered/deaths
+</div>
+<div class="widget">
+  Case distribution by mild / severe
+</div>
+<div class="widget">
+  Town detail widget
+</div>
+<div class="widget">
+  Recovery type
+</div>
   <script src="js/viz.js"></script>
 </body>
 </html>
