@@ -72,13 +72,17 @@ function ready(error, topo) {
     var colend = "sienna"
 
     switch(vtype){
-        case "recoverrate" || "deathrate":
+        case "recoverrate":
             colst="CRIMSON";colend="YELLOWGREEN";
+            break;
+        case "deathrate":
+            colst="YELLOWGREEN";colend="CRIMSON";
             break;
         case "death":
             colst="LIGHTGRAY";colend="BLACK";
             break;
     }
+    console.log(vtype,colst,colend)
 
     var colorScale = dd => dd == 0 ? "#cce6ae" : d3.scaleSequential(d3.interpolateHsl(colst,colend))(Math.log(dd) / 6)
     // Draw the map
@@ -106,10 +110,9 @@ function ready(error, topo) {
             d.recover = dataPoint.recover
             d.active = dataPoint.cases-dataPoint.recover-dataPoint.death
             d.past = dataPoint.cases - d.active
-            d.recoverrate = dataPoint.cases>0?(Math.pow(dataPoint.recover/dataPoint.cases,3)*1000):0;
+            d.recoverrate = d.past>0?(Math.pow(d.past/d.cases,3)*1000)+1:0;
             d.deathrate = dataPoint.death>0?(Math.pow((dataPoint.death)/(d.past),3)*1000)+1:0;
-            console.log(d.deathrate)
-
+            console.log(d.recoverrate)
             d.death = dataPoint.death
             return colorScale(d[vtype]);
         }).on("mouseenter", handleMouseOver)
@@ -129,7 +132,25 @@ function ready(error, topo) {
             .attr("font-size", "20px").attr("pointer-events", "none")
         //Sconsole.log(el)
         el.text(function() {
-            return capitalizeFirstLetter(d.properties["MPIO_CNMBR"] + ": " + d.cases);
+            return capitalizeFirstLetter(d.properties["MPIO_CNMBR"]);
+        });
+        var el2 = g2.append("text")
+        el2.attr("id", "textTown2" + "-" + i)
+        el2.attr("x", centr[0])
+        el2.attr("y", centr[1]+25).attr("text-anchor", "middle")
+            .attr("font-size", "20px").attr("pointer-events", "none")
+        //Sconsole.log(el)
+        el2.text(function() {
+            return ("Casos:" + d.cases + ",Activos: "+d.active+",Muertes: "+d.death+"");
+        });
+        var el3 = g2.append("text")
+        el3.attr("id", "textTown3" + "-" + i)
+        el3.attr("x", centr[0])
+        el3.attr("y", centr[1]+50).attr("text-anchor", "middle")
+            .attr("font-size", "20px").attr("pointer-events", "none")
+        //Sconsole.log(el)
+        el3.text(function() {
+            return ("Activos:" + (d.cases>0?Math.round((d.active/d.cases)*100*100)/100:0) +"%, Muertes: "+(d.past>0?Math.round(d.death/d.past*100*100)/100:0)+"%");
         });
     }
 
@@ -139,6 +160,8 @@ function ready(error, topo) {
 
         // Select text by id and then remove
         d3.select("#textTown" + "-" + i).remove(); // Remove text location
+        d3.select("#textTown2" + "-" + i).remove(); // Remove text location
+        d3.select("#textTown3" + "-" + i).remove(); // Remove text location
     }
 }
 var buttons = d3.selectAll('.maptype input');

@@ -1,7 +1,6 @@
 .ctext text {
     font-family: sans-serif;
-    fill: black;
-    stroke: white;
-    stroke-width: 0.3px;
+    fill: #343c40;
     font-weight: 600;
+    text-shadow: 0 0 3px white,0 0 3px white;
 }
