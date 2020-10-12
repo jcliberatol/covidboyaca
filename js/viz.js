@@ -147,7 +147,7 @@ function ready(error, topo) {
         el3.attr("id", "textTown3" + "-" + i)
         el3.attr("x", centr[0])
         el3.attr("y", centr[1]+50).attr("text-anchor", "middle")
-            .attr("font-size", "20px").attr("pointer-events", "none")
+            .attr("font-size", width > 500 ? "20px":"12px").attr("pointer-events", "none")
         //Sconsole.log(el)
         el3.text(function() {
             return ("Activos:" + (d.cases>0?Math.round((d.active/d.cases)*100*100)/100:0) +"% Muertes: "+(d.past>0?Math.round(d.death/d.past*100*100)/100:0)+"%");
@@ -170,6 +170,6 @@ drawViz(this.value);
 });
 drawViz("cases");
 window.onresize = function(){
-    drawViz();
+    drawViz("cases");
 }
 }
