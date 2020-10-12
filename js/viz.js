@@ -151,7 +151,7 @@ function ready(error, topo) {
     //Here we finish with the data, time to add all binders
 
     var drawViz = function(vtype) {
-        var width = innerWidth < 1000 ? innerWidth : Math.round(innerWidth * 0.75)
+        var width = innerWidth < 1000 ? innerWidth*0.8 : Math.round(innerWidth * 0.75)
         var height = Math.round(width * (9 / 16))
 
         var svg = d3.select("#mapsvg")
@@ -270,6 +270,6 @@ function ready(error, topo) {
     });
     drawViz("cases");
     window.onresize = function() {
-        drawViz("cases");
+        drawViz(d3.select('input[name="status"]:checked').property("value"));
     }
 }
