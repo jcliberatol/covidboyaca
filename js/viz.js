@@ -55,7 +55,7 @@ function ready(error, topo) {
     //Here we finish with the data, time to add all binders
 
     var drawViz = function(vtype) {
-    var width = Math.round(innerWidth * 0.9)
+    var width = innerWidth<1000?innerWidth:Math.round(innerWidth * 0.75)
     var height = Math.round(width * (9 / 16))
 
     var svg = d3.select("#mapsvg")
@@ -123,6 +123,7 @@ function ready(error, topo) {
         d3.select(this).attr("stroke", "black");
         let pt = this;
         var fsize = width > 600 ? "20px":"12px"
+        var spacing = width > 600 ? 20:12"
         var centr = mypath.centroid(d)
         // Specify where to put label of text
         //console.log(this,d,i,mypath,centr);
@@ -138,7 +139,7 @@ function ready(error, topo) {
         var el2 = g2.append("text")
         el2.attr("id", "textTown2" + "-" + i)
         el2.attr("x", centr[0])
-        el2.attr("y", centr[1]+25).attr("text-anchor", "middle")
+        el2.attr("y", centr[1]+spacing).attr("text-anchor", "middle")
             .attr("font-size", fsize).attr("pointer-events", "none")
         //Sconsole.log(el)
         el2.text(function() {
@@ -147,7 +148,7 @@ function ready(error, topo) {
         var el3 = g2.append("text")
         el3.attr("id", "textTown3" + "-" + i)
         el3.attr("x", centr[0])
-        el3.attr("y", centr[1]+50).attr("text-anchor", "middle")
+        el3.attr("y", centr[1]+spacing*2).attr("text-anchor", "middle")
             .attr("font-size", fsize).attr("pointer-events", "none")
         //Sconsole.log(el)
         el3.text(function() {
