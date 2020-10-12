@@ -141,7 +141,7 @@ function ready(error, topo) {
             .attr("font-size", "20px").attr("pointer-events", "none")
         //Sconsole.log(el)
         el2.text(function() {
-            return ("Casos:" + d.cases + ",Activos: "+d.active+",Muertes: "+d.death+"");
+            return ("Casos:" + d.cases + " Activos: "+d.active+" Muertes: "+d.death+"");
         });
         var el3 = g2.append("text")
         el3.attr("id", "textTown3" + "-" + i)
@@ -150,7 +150,7 @@ function ready(error, topo) {
             .attr("font-size", "20px").attr("pointer-events", "none")
         //Sconsole.log(el)
         el3.text(function() {
-            return ("Activos:" + (d.cases>0?Math.round((d.active/d.cases)*100*100)/100:0) +"%, Muertes: "+(d.past>0?Math.round(d.death/d.past*100*100)/100:0)+"%");
+            return ("Activos:" + (d.cases>0?Math.round((d.active/d.cases)*100*100)/100:0) +"% Muertes: "+(d.past>0?Math.round(d.death/d.past*100*100)/100:0)+"%");
         });
     }
 
