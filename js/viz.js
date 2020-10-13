@@ -26,10 +26,10 @@ function remove_nameless_bins(source_group) {
     };
 }
 var calcW=function(){
-    let wd = innerWidth < 1000 ? innerWidth * 0.8 : Math.round(innerWidth * 0.75)
-    let wd3 = wd/3 > 200 ? (wd/3)-25 : wd > 180? 180 : wd;
+    let wd = innerWidth < 1000 ? innerWidth * 0.7 : Math.round(innerWidth * 0.65)
+    let wd3 = wd/3 > 200 ? (wd/3)-35 : wd > 180? 180 : wd;
     let hh = Math.round(wd * (9 / 16))
-    let wd2 = wd/2 > 200 ? (wd/2)-30 : wd > 180? 180 : wd;
+    let wd2 = wd/2 > 200 ? (wd/2)-40 : wd > 180? 180 : wd;
     return [wd,wd3,hh,wd2]
 }
 var width = calcW()[0]
