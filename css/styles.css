@@ -32,17 +32,21 @@ rect#background:hover {
 
 .activempio {
     stroke: black;
+    stroke-width: 2px;
 }
 
 .unactive {
     opacity: 0.5;
 }
 
-#datumcontainer{
-    text-align: center;
-    /* line-height: 1em; */
-    /* box-shadow: 0 0 black; */
-    text-shadow: 1px 1px 2px #3182bd87;
+#datumcontainer {
+    position: absolute;
+    width: 100%;
+    text-shadow: 1px 1px 6px #ffffff, 1px 1px 6px #ffffff, 1px 1px 6px #ffffff;
+    pointer-events: none;
+    font-weight: bolder;
+    font-size: 20px;
+    padding-left: 64px;
 }
 
 .maptype {

@@ -27,12 +27,13 @@ function remove_nameless_bins(source_group) {
 }
 var calcW=function(){
 let ell = d3.select(".main-content").node()
-let inwi = innerWidth
-if(ell){inwi = ell.getBoundingClientRect().width}
+let inwi = innerWidth*0.8
+if(ell){inwi = ell.getBoundingClientRect().width-100}
     let wd = inwi
     let wd3 = wd/3 > 200 ? (wd/3)-35 : wd > 180? 180 : wd;
     let hh = Math.round(wd * (9 / 16))
     let wd2 = wd/2 > 200 ? (wd/2)-20 : wd > 180? 180 : wd;
+    console.log(inwi)
     return [wd,wd3,hh,wd2]
 }
 var width = calcW()[0]
@@ -55,17 +56,32 @@ var datumTxt2=function(d){
 
 let activx=d.active > 0 ?("Activos:" + (d.cases > 0 ? (Math.round(d.active / d.cases * 100 * 100) / 100 ): 0) + "%"):""
 let deatx =d.death  > 0 ?("Muertes:" + (d.past  > 0 ? (Math.round(d.death  / d.past  * 100 * 100) / 100 ): 0) + "%"):""
-console.log(d.active,d.death,activx,deatx)
+//console.log(d.active,d.death,activx,deatx)
 return (activx+"   "+deatx)
 }
-var drawDatum = function(){
+var drawDatum = function(cx){
     var dao = d3.select("#datumContainer")
-    dao.html("");
-    if(selectedDatum.cases != undefined){
-    let newdato ="<h2>"+datumTxt(selectedDatum)+"</h2><p>"+datumTxt1(selectedDatum)+"</p><p>"+datumTxt2(selectedDatum)+"</p>"
-    console.log(newdato)
-        dao.html(newdato)
+    let newdato = ""
+    if(cx){
+        console.log("Datum,",cx)
+        let datacol = {cases:0,death:0,active:0,recover:0,past:0,properties:{"MPIO_CNMBR":"Boyacá"}}
+        for(var xx = 0; xx<cx.length;xx++){
+            datacol.cases++;
+            if(cx[xx]["Fecha de muerte"]){
+                datacol.death++;
+            }
+            if(cx[xx]["Fecha recuperado"]){
+                datacol.recover++;
+            }
+        }
+        datacol.past = datacol.death+datacol.recover;
+        datacol.active = datacol.cases-datacol.past;
+        newdato ="<h2>"+datumTxt(datacol)+"</h2><p>"+datumTxt1(datacol)+"</p><p>"+datumTxt2(datacol)+"</p>"
     }
+    if(selectedDatum.cases != undefined){
+        newdato ="<h2>"+datumTxt(selectedDatum)+"</h2><p>"+datumTxt1(selectedDatum)+"</p><p>"+datumTxt2(selectedDatum)+"</p>"
+    }
+    dao.html(newdato)
 }
 let renderMap = function(topo, rawData, ledim) {
     console.log("LEDIM", ledim)
@@ -104,7 +120,7 @@ let renderMap = function(topo, rawData, ledim) {
     //Here we finish with the data, time to add all binders
 
     var drawViz = function(vtype) {
-
+    console.log("Redrawing viz")
         var bg = d3.select("#background")
         var svg = d3.select("#mapsvg")
         console.log(width, height)
@@ -175,22 +191,28 @@ let renderMap = function(topo, rawData, ledim) {
             .on("click", function(d, i) {
                 let town = datumTxt(d)
                 ledim.filter();
-                ledim.filter(town)
+                ledim.filter(town);
                 //console.log(d)
 
-                d3.selectAll(".map path").classed("unactive",true);
-                d3.select(".activempio").classed("activempio",false);
-                selectedDatum = d;
-                drawDatum();
-                d3.select("#"+"mpio"+d.properties["MPIO_CCDGO"]).classed("activempio",true).classed("unactive",false);
-                dc.redrawAll();
-            })
 
+                selectedDatum = d;
+                drawDatum(rawData);
+                dc.redrawAll();
+
+
+            })
+        if(selectedDatum.cases != undefined){
+            d3.selectAll(".map path").classed("unactive",true);
+            d3.select(".activempio").classed("activempio",false);
+            d3.select("#"+"mpio"+selectedDatum.properties["MPIO_CCDGO"]).classed("activempio",true).classed("unactive",false);
+            d3.select("#"+"mpio"+selectedDatum.properties["MPIO_CCDGO"])
+        }
+        drawDatum(rawData);
         bg.on("click", function(d, i) {
             console.log("Clicked bg", d, i, this)
             ledim.filter();
             selectedDatum = {};
-            drawDatum();
+            drawDatum(rawData);
             d3.select(".activempio").classed("activempio",false)
             d3.selectAll(".map path").classed("unactive",false);
             dc.redrawAll();
@@ -211,7 +233,6 @@ let renderMap = function(topo, rawData, ledim) {
             el.attr("x", centr[0])
             el.attr("y", centr[1]).attr("text-anchor", "middle")
                 .attr("font-size", fsize).attr("pointer-events", "none")
-            //Sconsole.log(el)
             let town = datumTxt(d)
             el.text(function() {
                 return town;
@@ -222,7 +243,6 @@ let renderMap = function(topo, rawData, ledim) {
             el2.attr("x", centr[0])
             el2.attr("y", centr[1] + spacing).attr("text-anchor", "middle")
                 .attr("font-size", fsize).attr("pointer-events", "none")
-            //Sconsole.log(el)
             el2.text(function() {
                 return datumTxt1(d);
             });
@@ -231,7 +251,6 @@ let renderMap = function(topo, rawData, ledim) {
             el3.attr("x", centr[0])
             el3.attr("y", centr[1] + spacing * 2).attr("text-anchor", "middle")
                 .attr("font-size", fsize).attr("pointer-events", "none")
-            //Sconsole.log(el)
             el3.text(function() {
                 return datumTxt2(d);
             });
@@ -266,14 +285,7 @@ let renderMap = function(topo, rawData, ledim) {
 
 var rawDatas = [];
 // Load external data and boot
-/*
-d3.queue()
-    .defer(d3.json, )
-    .defer(d3.csv, "data/boyaca.csv", function(d) {
-        rawDatas.push(d);
-    })
-    .await(ready);
-*/
+
 d3.json("data/boyaca_rewinded.json").then(function(tp) {
     console.log(tp)
     d3.csv("data/boyaca.csv").then(function(rd) {
@@ -313,8 +325,9 @@ function ready(error, topology) {
     const all = ndx.groupAll();
     var mpiodim = ndx.dimension(d => d["Ciudad de ubicación"])
     var filterFun = function() {
-        console.log("Filtered", ndx.allFiltered())
-        renderMap(topology, ndx.allFiltered(), mpiodim)
+        console.log(recchart,mfchart,severechart,crdserieschart,diagchart)
+        console.log("Filtered", ndx.allFiltered(),ndx)
+        renderMap(topology, ndx.allFiltered([mpiodim]), mpiodim)
     }
     console.log(ndx)
 
@@ -408,7 +421,7 @@ function ready(error, topology) {
         .height(250)
         .chart(function(c) {
         var lechart = new dc.LineChart(c).renderArea(true).curve(d3.curveCardinal.tension(0.9))
-        console.log(lechart,lechart._stack)
+        //console.log(lechart,lechart._stack)
             return lechart
         })
         .x(d3.scaleLinear().domain([0, 100]))
@@ -476,15 +489,15 @@ function ready(error, topology) {
         severechart.filterAll();
         mfchart.filterAll();
         mpiodim.filterAll()
-        diagDimension.filterAll()
+        diagchart.filterAll()
         selectedDatum = {};
-        drawDatum();
-        renderMap(topology, ndx.allFiltered(), mpiodim)
+        drawDatum(ndx.allFiltered([mpiodim]));
+        renderMap(topology, ndx.allFiltered([mpiodim]), mpiodim)
         dc.redrawAll();
     })
 
     //Map
-    renderMap(topology, ndx.allFiltered(), mpiodim)
+    renderMap(topology, ndx.allFiltered([mpiodim]), mpiodim)
 
 
 }
