@@ -26,3 +26,14 @@ text.row {
 body {
     font-family: sans-serif;
 }
+rect#background:hover {
+    fill: #f5deb361;
+}
+
+.activempio {
+    stroke: black;
+}
+
+.unactive {
+    opacity: 0.5;
+}
