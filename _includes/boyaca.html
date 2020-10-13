@@ -16,15 +16,17 @@
   <script src="js/crossfilter.js"></script>
 
 
+<!-- Create an element where the map will take place -->
+
 
   <link rel="stylesheet" href="css/styles.css">
 
-  <link rel="stylesheet" href="https://unpkg.com/dc@4/dist/style/dc.css">
+  <link rel="stylesheet" href="css/dc.css">
 
 </head>
 
 <body>
-
+<div class="madeby">hecho por <a  href="https://jcliberatol.github.io">Juan Liberato</a></div>
 <div class="maptype">
   <input type="radio" id="bcases" name="status" value="cases" checked="checked">
   <label for="bcases">Total</label><br>
@@ -42,19 +44,15 @@
 
 </div>
 
-
+<div id="datumContainer"></div>
 <svg id="mapsvg">
 
   <g id="gbackground">
         <rect id="background" x="0" y="0" fill="#ffffff00"></rect>
     </g>
 </svg>
-<div class="">
-  <div class="widget simpl">
-  <h4>Fecha Diagnostico</h4>
-  <div id="diagchart"></div>
-</div>
-  <div id="datumContainer"></div>
+<div id="diagchart"></div>
+
 </div>
 <button id="bclear">Limpiar Filtros</button><br>
 <div class="widget simpl">

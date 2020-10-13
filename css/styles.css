@@ -52,3 +52,9 @@ rect#background:hover {
 .maptype {
     text-align: center;
 }
+
+.madeby {
+    position: absolute;
+    color: grey;
+    opacity: 0.5;
+}
