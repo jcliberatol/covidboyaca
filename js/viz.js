@@ -29,10 +29,10 @@ var calcW=function(){
 let ell = d3.select(".main-content").node()
 let inwi = innerWidth
 if(ell){inwi = ell.getBoundingClientRect().width}
-    let wd = inwi < 1000 ? inwi * 0.8 : Math.round(inwi * 0.75)
+    let wd = inwi
     let wd3 = wd/3 > 200 ? (wd/3)-35 : wd > 180? 180 : wd;
     let hh = Math.round(wd * (9 / 16))
-    let wd2 = wd/2 > 200 ? (wd/2)-40 : wd > 180? 180 : wd;
+    let wd2 = wd/2 > 200 ? (wd/2)-20 : wd > 180? 180 : wd;
     return [wd,wd3,hh,wd2]
 }
 var width = calcW()[0]
