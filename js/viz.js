@@ -24,100 +24,11 @@ function capitalizeFirstLetter(string) {
         size: source_group.size
     };
 }
-// Data and color scale
 
-var rawData = [];
-// Load external data and boot
-d3.queue()
-    .defer(d3.json, "data/boyaca_rewinded.json")
-    .defer(d3.csv, "data/boyaca.csv", function(d) {
-        rawData.push(d);
-    })
-    .await(ready);
-
-function ready(error, topo) {
-
-    var data = d3.map();
-
-    console.log(topo)
-    console.log(rawData);
-
-    //Dashboard
-
-    var recchart = new dc.RowChart("#recchart")
-    var mfchart = new dc.RowChart("#mfchart")
-    var severechart = new dc.RowChart("#severechart")
-    var crdserieschart = new dc.SeriesChart("#crdserieschart")
-    const dateFormatSpecifier = '%Y-%m-%dT%H:%M:%S.%L';
-    const dateFormat = d3.timeFormat(dateFormatSpecifier);
-    const dateFormatParser = d3.timeParse(dateFormatSpecifier);
-
-    rawData.forEach(d=>{
-        d.dateFIS = dateFormatParser(d["FIS"])
-        d.datemort = dateFormatParser(d["Fecha de muerte"])
-        d.datenot = dateFormatParser(d["Fecha de notificación"])
-        d.datediag = dateFormatParser(d["Fecha diagnostico"])
-        d.daterec = dateFormatParser(d["Fecha recuperado"])
-        d.dateweb = dateFormatParser(d["fecha reporte web"])
-        d.gender = d["Sexo"]=="M"?"Hombre":"Mujer";
-    })
-    const ndx = crossfilter(rawData);
-    const all = ndx.groupAll();
-    console.log(ndx)
-    var mfdim = ndx.dimension(d => d.gender)
-    var mfg = mfdim.group();
-
-     mfchart
-        .width(180)
-        .height(180)
-        .margins({top: 20, left: 10, right: 10, bottom: 20})
-        .group(mfg)
-        .dimension(mfdim)
-        .ordinalColors(['#01c5c4', '#b8de6f'])
-        .label(d => d.key +" "+ (Math.round(d.value/ndx.allFiltered().length *10000)/100 + "%"))
-        .title(d => d.value)
-        .elasticX(true)
-        .xAxis().ticks(4);
-    mfchart.render();
-
-    var severechartdim = ndx.dimension(d => d["Estado"].toUpperCase())
-    var severechartg = remove_nameless_bins(severechartdim.group());
-
-    console.log(ndx.allFiltered().length)
-
-     severechart
-        .width(180)
-        .height(180)
-        .margins({top: 20, left: 10, right: 10, bottom: 20})
-        .group(severechartg)
-        .dimension(severechartdim)
-        .ordinalColors(['#01c5c4','#b8de6f',"#f1e189","#f39233","#794c74","#c56183"])
-        .label(d => d.key +" "+ (Math.round(d.value/ndx.allFiltered().length *10000)/100 + "%"))
-        .title(d => d.value)
-        .elasticX(true)
-        .xAxis().ticks(4);
-    severechart.render();
-
-    var recchartdim = ndx.dimension(d => d["atención"].toUpperCase())
-    var recchartg = remove_nameless_bins(recchartdim.group());
-
-     recchart
-        .width(180)
-        .height(180)
-        .margins({top: 20, left: 10, right: 10, bottom: 20})
-        .group(recchartg)
-        .dimension(recchartdim)
-        .ordinalColors(['#01c5c4','#b8de6f',"#f1e189","#f39233","#794c74","#c56183"])
-        .label(d => d.key +" "+ (Math.round(d.value/ndx.allFiltered().length *10000)/100 + "%"))
-        .title(d => d.value)
-        .elasticX(true)
-        .xAxis().ticks(4);
-    recchart.render();
-
-    //Map
-
-
+let renderMap = function(topo,rawData,ledim){
+console.log("LEDIM",ledim)
     var datadic = {};
+    var data = d3.map();
     for (i = 0; i < rawData.length; i++) {
         var dt = rawData[i];
         var city = dt["Ciudad de ubicación"]
@@ -153,11 +64,13 @@ function ready(error, topo) {
     var drawViz = function(vtype) {
         var width = innerWidth < 1000 ? innerWidth*0.8 : Math.round(innerWidth * 0.75)
         var height = Math.round(width * (9 / 16))
-
+        var bg = d3.select("#background")
         var svg = d3.select("#mapsvg")
         console.log(width, height)
         svg.attr("width", width),
             svg.attr("height", height);
+            bg.attr("width", width),
+            bg.attr("height", height);
         var path = d3.geoPath();
         var projection = d3.geoMercator()
             .scale(width * 13)
@@ -183,7 +96,7 @@ function ready(error, topo) {
         }
         console.log(vtype, colst, colend)
 
-        var colorScale = dd => dd == 0 ? "#cce6ae" : d3.scaleSequential(d3.interpolateHsl(colst, colend))(Math.log(dd) / 6)
+        var colorScale = dd => dd == 0 ? "#cce6ae" : d3.scaleSequential(d3.interpolateHsl(colst, colend))(Math.log(dd)/6 )
         // Draw the map
         d3.select(".map").remove();
         d3.select(".ctext").remove();
@@ -214,7 +127,19 @@ function ready(error, topo) {
                 d.death = dataPoint.death
                 return colorScale(d[vtype]);
             }).on("mouseenter", handleMouseOver)
-            .on("mouseleave", handleMouseOut);
+            .on("mouseleave", handleMouseOut)
+            .on("click",function(d,i){
+            let town = capitalizeFirstLetter(d.properties["MPIO_CNMBR"])
+            ledim.filter();
+                ledim.filter(town)
+                console.log(town)
+            dc.redrawAll();
+            })
+        bg.on("click",function(d,i){
+            console.log("Clicked bg",d,i,this)
+            ledim.filter();
+            dc.redrawAll();
+        })
 
         function handleMouseOver(d, i) { // Add interactivity
             // Use D3 to select element, change color and size
@@ -231,9 +156,11 @@ function ready(error, topo) {
             el.attr("y", centr[1]).attr("text-anchor", "middle")
                 .attr("font-size", fsize).attr("pointer-events", "none")
             //Sconsole.log(el)
+            let town = capitalizeFirstLetter(d.properties["MPIO_CNMBR"])
             el.text(function() {
-                return capitalizeFirstLetter(d.properties["MPIO_CNMBR"]);
+                return town;
             });
+
             var el2 = g2.append("text")
             el2.attr("id", "textTown2" + "-" + i)
             el2.attr("x", centr[0])
@@ -241,7 +168,7 @@ function ready(error, topo) {
                 .attr("font-size", fsize).attr("pointer-events", "none")
             //Sconsole.log(el)
             el2.text(function() {
-                return ("Casos:" + d.cases + " Activos: " + d.active + " Muertes: " + d.death + "");
+                return ("(Casos:" + d.cases + ")  (Activos: " + d.active + ")  (Muertes: " + d.death + ")");
             });
             var el3 = g2.append("text")
             el3.attr("id", "textTown3" + "-" + i)
@@ -250,7 +177,7 @@ function ready(error, topo) {
                 .attr("font-size", fsize).attr("pointer-events", "none")
             //Sconsole.log(el)
             el3.text(function() {
-                return ("Activos:" + (d.cases > 0 ? Math.round((d.active / d.cases) * 100 * 100) / 100 : 0) + "% Muertes: " + (d.past > 0 ? Math.round(d.death / d.past * 100 * 100) / 100 : 0) + "%");
+                return ("Activos:" + (d.cases > 0 ? Math.round((d.active / d.cases) * 100 * 100) / 100 : 0) + "%   Muertes: " + (d.past > 0 ? Math.round(d.death / d.past * 100 * 100) / 100 : 0) + "%");
             });
         }
 
@@ -272,4 +199,110 @@ function ready(error, topo) {
     window.onresize = function() {
         drawViz(d3.select('input[name="status"]:checked').property("value"));
     }
+
+    }
+// Data and color scale
+
+var rawDatas = [];
+// Load external data and boot
+d3.queue()
+    .defer(d3.json, "data/boyaca_rewinded.json")
+    .defer(d3.csv, "data/boyaca.csv", function(d) {
+        rawDatas.push(d);
+    })
+    .await(ready);
+
+function ready(error, topology) {
+    console.log(rawDatas);
+
+    //Dashboard
+
+
+
+    var recchart = new dc.RowChart("#recchart")
+    var mfchart = new dc.RowChart("#mfchart")
+    var severechart = new dc.RowChart("#severechart")
+    var crdserieschart = new dc.SeriesChart("#crdserieschart")
+    const dateFormatSpecifier = '%Y-%m-%dT%H:%M:%S.%L';
+    const dateFormat = d3.timeFormat(dateFormatSpecifier);
+    const dateFormatParser = d3.timeParse(dateFormatSpecifier);
+
+    rawDatas.forEach(d=>{
+        d.dateFIS = dateFormatParser(d["FIS"])
+        d.datemort = dateFormatParser(d["Fecha de muerte"])
+        d.datenot = dateFormatParser(d["Fecha de notificación"])
+        d.datediag = dateFormatParser(d["Fecha diagnostico"])
+        d.daterec = dateFormatParser(d["Fecha recuperado"])
+        d.dateweb = dateFormatParser(d["fecha reporte web"])
+        d.gender = d["Sexo"]=="M"?"Hombre":"Mujer";
+        d["Ciudad de ubicación"] = capitalizeFirstLetter(d["Ciudad de ubicación"])
+    })
+    const ndx = crossfilter(rawDatas);
+    const all = ndx.groupAll();
+    var mpiodim = ndx.dimension(d => d["Ciudad de ubicación"])
+    var filterFun = function(){
+        console.log("Filtered",ndx.allFiltered())
+        renderMap(topology,ndx.allFiltered(),mpiodim)
+    }
+    console.log(ndx)
+
+
+
+    var mfdim = ndx.dimension(d => d.gender)
+    var mfg = mfdim.group();
+
+     mfchart
+        .width(180)
+        .height(180)
+        .margins({top: 20, left: 10, right: 10, bottom: 20})
+        .group(mfg)
+        .dimension(mfdim)
+        .ordinalColors(['#01c5c4', '#b8de6f'])
+        .label(d => d.key +" "+ (Math.round(d.value/ndx.allFiltered().length *10000)/100 + "%"))
+        .title(d => d.value)
+        .elasticX(true)
+        .xAxis().ticks(4)
+    mfchart.on('filtered',filterFun);
+    mfchart.render();
+
+    var severechartdim = ndx.dimension(d => d["Estado"].toUpperCase())
+    var severechartg = remove_nameless_bins(severechartdim.group());
+
+    console.log(ndx.allFiltered().length)
+
+     severechart
+        .width(180)
+        .height(180)
+        .margins({top: 20, left: 10, right: 10, bottom: 20})
+        .group(severechartg)
+        .dimension(severechartdim)
+        .ordinalColors(['#01c5c4','#b8de6f',"#f1e189","#f39233","#794c74","#c56183"])
+        .label(d => d.key +" "+ (Math.round(d.value/ndx.allFiltered().length *10000)/100 + "%"))
+        .title(d => d.value)
+        .elasticX(true)
+        .xAxis().ticks(4)
+        severechart.on('filtered',filterFun);
+    severechart.render();
+
+    var recchartdim = ndx.dimension(d => d["atención"].toUpperCase())
+    var recchartg = remove_nameless_bins(recchartdim.group());
+
+     recchart
+        .width(180)
+        .height(180)
+        .margins({top: 20, left: 10, right: 10, bottom: 20})
+        .group(recchartg)
+        .dimension(recchartdim)
+        .ordinalColors(['#01c5c4','#b8de6f',"#f1e189","#f39233","#794c74","#c56183"])
+        .label(d => d.key +" "+ (Math.round(d.value/ndx.allFiltered().length *10000)/100 + "%"))
+        .title(d => d.value)
+        .elasticX(true)
+        .xAxis().ticks(4)
+        recchart.on('filtered',filterFun);
+    recchart.render();
+
+    //Map
+    renderMap(topology,ndx.allFiltered(),mpiodim)
+
+
 }
