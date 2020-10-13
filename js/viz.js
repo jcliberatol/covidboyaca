@@ -294,6 +294,7 @@ function ready(error, topology) {
     var mfchart = new dc.RowChart("#mfchart")
     var severechart = new dc.RowChart("#severechart")
     var crdserieschart = new dc.SeriesChart("#crdserieschart")
+    var diagchart = new dc.BarChart("#diagchart");
     const dateFormatSpecifier = '%Y-%m-%dT%H:%M:%S.%L';
     const dateFormat = d3.timeFormat(dateFormatSpecifier);
     const dateFormatParser = d3.timeParse(dateFormatSpecifier);
@@ -437,8 +438,32 @@ function ready(error, topology) {
     console.log(severechartg)
     crdserieschart.render();
 
+    //Date chart now
+    var diagDimension = ndx.dimension(function(d) {
+        return d.datediag
+    });
+    var diagGroup = diagDimension.group(d3.timeDay)
+    console.log(diagGroup)
+    let gall = diagGroup.top(Infinity);
+    let t1 = gall[gall.length-1].key;
+    let t2 = gall[0].key;
+
+    diagchart.width(width)
+   .height(180)
+   .x(d3.scaleTime().domain([t1,t2]))
+   .elasticY(true)
+   .brushOn(true)
+   .xUnits(d3.timeDays)
+   .dimension(diagDimension)
+        .yAxisLabel("Casos Semanales")
+        .xAxisLabel("Fecha")
+   .group(diagGroup).on('filtered', filterFun);
+   diagchart.yAxis().ticks(3)
+    diagchart.render();
+
     resizeCharts = function(){
         crdserieschart.width(width)
+        diagchart.width(width)
         recchart.width(w3)
         severechart.width(w3)
         mfchart.width(w3)
@@ -451,6 +476,7 @@ function ready(error, topology) {
         severechart.filterAll();
         mfchart.filterAll();
         mpiodim.filterAll()
+        diagDimension.filterAll()
         selectedDatum = {};
         drawDatum();
         renderMap(topology, ndx.allFiltered(), mpiodim)
