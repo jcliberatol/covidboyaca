@@ -340,7 +340,7 @@ function ready(error, topology) {
         return (val?val:0) + "%"
     }
     mfchart
-        .width(w2)
+        .width(w3)
         .height(180)
         .margins({
             top: 20,
@@ -389,7 +389,7 @@ function ready(error, topology) {
     var recchartg = remove_nameless_bins(recchartdim.group());
 
     recchart
-        .width(w2)
+        .width(w3)
         .height(180)
         .margins({
             top: 20,
