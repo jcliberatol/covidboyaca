@@ -333,6 +333,9 @@ function ready(error, topology) {
 
     console.log(ndx.allFiltered().length)
 
+    var coleurs = d3.scaleOrdinal().domain(["ASINTOMÁTICO","FALLECIDO","GRAVE","LEVE","MODERADO",""])
+                          .range(['#01c5c4', '#b8de6f', "#f1e189", "#f39233", "#794c74", "#c56183"])
+
     severechart
         .width(w3)
         .height(180)
@@ -344,7 +347,7 @@ function ready(error, topology) {
         })
         .group(severechartg)
         .dimension(severechartdim)
-        .ordinalColors(['#01c5c4', '#b8de6f', "#f1e189", "#f39233", "#794c74", "#c56183"])
+        .colors(coleurs)
         .label(d => d.key + " " + prop(d))
         .title(d => d.value)
         .elasticX(true)
@@ -398,6 +401,7 @@ function ready(error, topology) {
         .dimension(runDimension)
         .group(runGroup)
         .mouseZoomable(false)
+        .colors(coleurs)
         .seriesAccessor(function(d) {
             return d.key[0];
         })
@@ -411,7 +415,8 @@ function ready(error, topology) {
             return d.key[0];
         })
     crdserieschart.on('filtered', filterFun);
-
+    console.log(crdserieschart);
+    console.log(severechartg)
     crdserieschart.render();
 
     resizeCharts = function(){
