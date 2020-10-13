@@ -54,7 +54,6 @@ rect#background:hover {
 }
 
 .madeby {
-    position: absolute;
     color: grey;
     opacity: 0.5;
 }
