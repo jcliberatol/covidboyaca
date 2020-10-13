@@ -13,7 +13,7 @@ text.row {
     text-shadow: 0 0 5px white;
 }
 
-.widget.simpl {
+.simpl {
     display: inline-block;
 }
 
@@ -27,7 +27,7 @@ body {
     font-family: sans-serif;
 }
 rect#background:hover {
-    fill: #f5deb361;
+    fill: #b8de6f61;
 }
 
 .activempio {

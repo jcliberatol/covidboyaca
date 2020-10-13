@@ -29,11 +29,13 @@ var calcW=function(){
     let wd = innerWidth < 1000 ? innerWidth * 0.8 : Math.round(innerWidth * 0.75)
     let wd3 = wd/3 > 200 ? (wd/3)-25 : wd > 180? 180 : wd;
     let hh = Math.round(wd * (9 / 16))
-    return [wd,wd3,hh]
+    let wd2 = wd/2 > 200 ? (wd/2)-30 : wd > 180? 180 : wd;
+    return [wd,wd3,hh,wd2]
 }
 var width = calcW()[0]
 var w3 = calcW()[1]
 var height = calcW()[2]
+var w2 = calcW()[3]
 var resizeCharts=function(){};
 var selectedDatum={}
 var datumTxt = function(d){
@@ -241,6 +243,7 @@ let renderMap = function(topo, rawData, ledim) {
          width = calcW()[0]
          w3 = calcW()[1]
          height = calcW()[2]
+         w2 = calcW()[3]
         drawViz(d3.select('input[name="status"]:checked').property("value"));
         resizeCharts();
     }
@@ -310,7 +313,7 @@ function ready(error, topology) {
         return (val?val:0) + "%"
     }
     mfchart
-        .width(w3)
+        .width(w2)
         .height(180)
         .margins({
             top: 20,
@@ -337,7 +340,7 @@ function ready(error, topology) {
                           .range(['#01c5c4', '#b8de6f', "#f1e189", "#f39233", "#794c74", "#c56183"])
 
     severechart
-        .width(w3)
+        .width(width*(1/3))
         .height(180)
         .margins({
             top: 20,
@@ -359,7 +362,7 @@ function ready(error, topology) {
     var recchartg = remove_nameless_bins(recchartdim.group());
 
     recchart
-        .width(w3)
+        .width(w2)
         .height(180)
         .margins({
             top: 20,
@@ -387,10 +390,12 @@ function ready(error, topology) {
 
     //Values of the rungroup
 
-    crdserieschart.width(width)
+    crdserieschart.width(width*(2/3))
         .height(250)
         .chart(function(c) {
-            return new dc.LineChart(c).renderArea(true).curve(d3.curveCardinal.tension(0.9))
+        var lechart = new dc.LineChart(c).renderArea(true).curve(d3.curveCardinal.tension(0.9))
+        console.log(lechart,lechart._stack)
+            return lechart
         })
         .x(d3.scaleLinear().domain([0, 100]))
         .brushOn(false)
