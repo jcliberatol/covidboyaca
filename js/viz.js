@@ -28,7 +28,7 @@ function remove_nameless_bins(source_group) {
 var calcW=function(){
 let ell = d3.select(".main-content").node()
 let inwi = innerWidth*0.8
-if(ell){inwi = ell.getBoundingClientRect().width-150}
+if(ell){inwi = ell.getBoundingClientRect().width-200}
     let wd = inwi
     let wd3 = wd/3 > 200 ? (wd/3)-35 : wd > 180? 180 : wd;
     let hh = Math.round(wd * (9 / 16))
