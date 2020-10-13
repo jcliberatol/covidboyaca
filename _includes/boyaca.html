@@ -8,22 +8,25 @@
   <meta charset="utf-8">
 
 <!-- Load d3.js -->
-<script src="https://d3js.org/d3.v4.js"></script>
+<script src="js/d3.v5.js"></script>
+  <script src="js/d3-queue.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dc/4.2.0/dc.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.5.4/crossfilter.js"></script>
+  <script src="js/dc.js"></script>
+  <script src="js/crossfilter.js"></script>
+
 
 <!-- Create an element where the map will take place -->
 
 
   <link rel="stylesheet" href="css/styles.css">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dc/4.2.0/style/dc.css">
+  <link rel="stylesheet" href="https://unpkg.com/dc@4/dist/style/dc.css">
 
 </head>
 
 <body>
+<button id="bclear">Limpiar Filtros</button>
 <div class="maptype">
   <input type="radio" id="bcases" name="status" value="cases" checked="checked">
   <label for="bcases">Total</label><br>
@@ -42,7 +45,12 @@
 </div>
 
 <div class="">
-<svg id="mapsvg"></svg>
+<svg id="mapsvg">
+
+  <g id="gbackground">
+        <rect id="background" x="0" y="0" fill="#ffffff00"></rect>
+    </g>
+</svg>
 </div>
 <div class="widget simpl">
   <h4>Género</h4>

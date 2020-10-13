@@ -205,12 +205,22 @@ console.log("LEDIM",ledim)
 
 var rawDatas = [];
 // Load external data and boot
+/*
 d3.queue()
-    .defer(d3.json, "data/boyaca_rewinded.json")
+    .defer(d3.json, )
     .defer(d3.csv, "data/boyaca.csv", function(d) {
         rawDatas.push(d);
     })
     .await(ready);
+*/
+d3.json("data/boyaca_rewinded.json").then(function(tp){
+console.log(tp)
+    d3.csv("data/boyaca.csv").then(function(rd){
+    console.log(rd)
+        rawDatas = rd;
+        ready(undefined,tp)
+    })
+})
 
 function ready(error, topology) {
     console.log(rawDatas);
@@ -300,6 +310,43 @@ function ready(error, topology) {
         .xAxis().ticks(4)
         recchart.on('filtered',filterFun);
     recchart.render();
+
+    var runDimension = ndx.dimension(function(d) {return [d["Estado"].toUpperCase(), Math.round(Number(d["Edad"])/5)*5 + 5] });
+    var runGroup = runDimension.group().reduceSum(function(d) { return 1; });
+    console.log(runGroup)
+    crdserieschart.width(600)
+    .height(250)
+    .chart(function(c) { return new dc.LineChart(c).renderArea(true).curve(d3.curveCardinal.tension(0.5))})
+    .x(d3.scaleLinear().domain([0,100]))
+    .brushOn(false)
+    .yAxisLabel("Casos")
+    .xAxisLabel("Edad")
+    .clipPadding(10)
+    .elasticY(true)
+    .dimension(runDimension)
+    .group(runGroup)
+    .mouseZoomable(false)
+    .seriesAccessor(function(d) {return d.key[0];})
+    .keyAccessor(function(d) {return +d.key[1];})
+    .valueAccessor(function(d) {return +d.value;})
+    //.legend(dc.legend().x(80).y(50).itemHeight(12).gap(6).horizontal(20).legendWidth(300).itemWidth(300))
+    //.ordinalColors(['#01c5c4','#b8de6f',"#f1e189","#f39233","#794c74","#c56183"])
+
+
+    crdserieschart.on('filtered',filterFun);
+
+    crdserieschart.render();
+
+    d3.select("#bclear").on("click",function(){
+    console.log("Cleaning all filters")
+        recchart.filterAll();
+        severechart.filterAll();
+        mfchart.filterAll();
+        mpiodim.filterAll()
+
+        renderMap(topology,ndx.allFiltered(),mpiodim)
+        dc.redrawAll();
+    })
 
     //Map
     renderMap(topology,ndx.allFiltered(),mpiodim)

@@ -8,11 +8,12 @@
   <meta charset="utf-8">
 
 <!-- Load d3.js -->
-<script src="https://d3js.org/d3.v4.js"></script>
+<script src="js/d3.v5.js"></script>
+  <script src="js/d3-queue.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
-  <script src="https://unpkg.com/dc@4/dist/dc.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.5.4/crossfilter.js"></script>
+  <script src="js/dc.js"></script>
+  <script src="js/crossfilter.js"></script>
 
 
 <!-- Create an element where the map will take place -->
@@ -25,6 +26,7 @@
 </head>
 
 <body>
+<button id="bclear">Limpiar Filtros</button>
 <div class="maptype">
   <input type="radio" id="bcases" name="status" value="cases" checked="checked">
   <label for="bcases">Total</label><br>
