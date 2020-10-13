@@ -1,77 +1,84 @@
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
+    <meta charset="utf-8">
 
-  <title>Covid Boyacá</title>
-  <meta name="description" content="Boyacá coronavirus visualization">
-  <meta name="author" content="Juan Liberato">
-  <meta charset="utf-8">
+    <title>Covid Boyacá</title>
+    <meta name="description" content="Boyacá coronavirus visualization">
+    <meta name="author" content="Juan Liberato">
+    <meta charset="utf-8">
 
-<!-- Load d3.js -->
-<script src="js/d3.v5.js"></script>
-  <script src="js/d3-queue.js"></script>
-<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
-  <script src="js/dc.js"></script>
-  <script src="js/crossfilter.js"></script>
-
-
-<!-- Create an element where the map will take place -->
+    <!-- Load d3.js -->
+    <script src="js/d3.v5.js"></script>
+    <script src="js/d3-queue.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+    <script src="js/dc.js"></script>
+    <script src="js/crossfilter.js"></script>
 
 
-  <link rel="stylesheet" href="css/styles.css">
+    <!-- Create an element where the map will take place -->
 
-  <link rel="stylesheet" href="css/dc.css">
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <link rel="stylesheet" href="css/dc.css">
 
 </head>
 
 <body>
-<div class="madeby">hecho por <a  href="https://jcliberatol.github.io">Juan Liberato</a></div>
-<div class="maptype">
-  <input type="radio" id="bcases" name="status" value="cases" checked="checked">
-  <label for="bcases">Total</label><br>
-  <input type="radio" id="bdeath" name="status" value="death">
-  <label for="bdeath"># Muertos</label>
-  <input type="radio" id="bactive" name="status" value="active">
-  <label for="bactive"># Activos</label>
-  <input type="radio" id="brecover" name="status" value="recover">
-  <label for="brecover"># Recuperados</label><br>
+    <div class="madeby">hecho por <a href="https://jcliberatol.github.io">Juan Liberato</a></div>
+    <div class="maptype">
+        <input type="radio" id="bcases" name="status" value="cases" checked="checked">
+        <label for="bcases">Total</label><br>
+        <input type="radio" id="bdeath" name="status" value="death">
+        <label for="bdeath"># Muertos</label>
+        <input type="radio" id="bactive" name="status" value="active">
+        <label for="bactive"># Activos</label>
+        <input type="radio" id="brecover" name="status" value="recover">
+        <label for="brecover"># Recuperados</label><br>
 
-  <input type="radio" id="brecoverrate" name="status" value="recoverrate">
-  <label for="brecoverrate">% Activos</label>
-  <input type="radio" id="bdeathrate" name="status" value="deathrate">
-  <label for="bdeathrate">% Muertes</label>
+        <input type="radio" id="brecoverrate" name="status" value="recoverrate">
+        <label for="brecoverrate">% Activos</label>
+        <input type="radio" id="bdeathrate" name="status" value="deathrate">
+        <label for="bdeathrate">% Muertes</label>
 
-</div>
+    </div>
+    <div class="widget">
+        <div>
+            <div id="datumContainer"></div>
+            <svg id="mapsvg">
+                <g id="gbackground">
+                    <rect id="background" x="0" y="0" fill="#ffffff00"></rect>
+                </g>
+            </svg>
+        </div>
+        <div>
+            <div id="diagchart"></div>
+        </div>
+    </div>
+    <button id="bclear">Limpiar Filtros</button><br>
+    <div class="widget">
+        <div class="simpl">
+            <h4>Género</h4>
+            <div id="mfchart"></div>
+        </div>
 
-<div id="datumContainer"></div>
-<svg id="mapsvg">
-  <g id="gbackground">
-        <rect id="background" x="0" y="0" fill="#ffffff00"></rect>
-    </g>
-</svg>
-<div id="diagchart"></div>
-<button id="bclear">Limpiar Filtros</button><br>
-<div class="widget">
-  <div class="simpl">
-  <h4>Género</h4>
-  <div id="mfchart"></div>
-</div>
-
-<div class="simpl">
-  <h4>Tipo Atención</h4>
-  <div id="recchart"></div>
-  </div>
-</div>
-<div class="widget">
-  <div class="simpl">
-  <h4>Severidad por Edad</h4>
-  <div id="severechart"></div>
-</div>
-  <div class="simpl">
-  <div id="crdserieschart"></div>
-</div>
-</div>
-  <script src="js/viz.js"></script>
+        <div class="simpl">
+            <h4>Tipo Atención</h4>
+            <div id="recchart"></div>
+        </div>
+    </div>
+    <div class="widget">
+        <div class="simpl">
+            <h4>Severidad por Edad</h4>
+            <div id="severechart"></div>
+        </div>
+        <div class="simpl">
+            <div id="crdserieschart"></div>
+        </div>
+    </div>
+    <script src="js/viz.js"></script>
 </body>
+
 </html>

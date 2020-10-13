@@ -25,61 +25,72 @@ function remove_nameless_bins(source_group) {
         size: source_group.size
     };
 }
-var calcW=function(){
-let ell = d3.select(".main-content").node()
-let inwi = innerWidth*0.8
-if(ell){inwi = ell.getBoundingClientRect().width-200}
+var calcW = function() {
+    let ell = d3.select(".main-content").node()
+    let inwi = innerWidth * 0.8
+    if (ell) {
+        inwi = ell.getBoundingClientRect().width - 200
+    }
     let wd = inwi
-    let wd3 = wd/3 > 200 ? (wd/3)-35 : wd > 180? 180 : wd;
+    let wd3 = wd / 3 > 200 ? (wd / 3) - 35 : wd > 180 ? 180 : wd;
     let hh = Math.round(wd * (9 / 16))
-    let wd2 = wd/2 > 200 ? (wd/2)-20 : wd > 180? 180 : wd;
+    let wd2 = wd / 2 > 200 ? (wd / 2) - 20 : wd > 180 ? 180 : wd;
     console.log(inwi)
-    return [wd,wd3,hh,wd2]
+    return [wd, wd3, hh, wd2]
 }
 var width = calcW()[0]
 var w3 = calcW()[1]
 var height = calcW()[2]
 var w2 = calcW()[3]
-var resizeCharts=function(){};
-var selectedDatum={}
-var datumTxt = function(d){
+var resizeCharts = function() {};
+var selectedDatum = {}
+var datumTxt = function(d) {
     return capitalizeFirstLetter(d.properties["MPIO_CNMBR"])
 }
-var datumTxt1=function(d){
-return (
-        (d.cases >0?("(Casos:"    + d.cases  + ")"):"")+
-        (d.active>0?("(Activos: " + d.active + ")"):"")+
-        (d.death >0?("(Muertes: " + d.death  + ")"):"")
-        )
+var datumTxt1 = function(d) {
+    return (
+        (d.cases > 0 ? ("(Casos:" + d.cases + ")") : "") +
+        (d.active > 0 ? ("(Activos: " + d.active + ")") : "") +
+        (d.death > 0 ? ("(Muertes: " + d.death + ")") : "")
+    )
 }
-var datumTxt2=function(d){
+var datumTxt2 = function(d) {
 
-let activx=d.active > 0 ?("Activos:" + (d.cases > 0 ? (Math.round(d.active / d.cases * 100 * 100) / 100 ): 0) + "%"):""
-let deatx =d.death  > 0 ?("Muertes:" + (d.past  > 0 ? (Math.round(d.death  / d.past  * 100 * 100) / 100 ): 0) + "%"):""
-//console.log(d.active,d.death,activx,deatx)
-return (activx+"   "+deatx)
+    let activx = d.active > 0 ? ("Activos:" + (d.cases > 0 ? (Math.round(d.active / d.cases * 100 * 100) / 100) : 0) + "%") : ""
+    let deatx = d.death > 0 ? ("Muertes:" + (d.past > 0 ? (Math.round(d.death / d.past * 100 * 100) / 100) : 0) + "%") : ""
+    //console.log(d.active,d.death,activx,deatx)
+    return (activx + "   " + deatx)
 }
-var drawDatum = function(cx){
+var drawDatum = function(cx) {
     var dao = d3.select("#datumContainer")
     let newdato = ""
-    if(cx){
-        console.log("Datum,",cx)
-        let datacol = {cases:0,death:0,active:0,recover:0,past:0,properties:{"MPIO_CNMBR":"Boyacá"}}
-        for(var xx = 0; xx<cx.length;xx++){
+    if (cx) {
+        console.log("Datum,", cx)
+        let datacol = {
+            cases: 0,
+            death: 0,
+            active: 0,
+            recover: 0,
+            past: 0,
+            properties: {
+                "MPIO_CNMBR": "Boyacá"
+            }
+        }
+        for (var xx = 0; xx < cx.length; xx++) {
             datacol.cases++;
-            if(cx[xx]["Fecha de muerte"]){
+            if (cx[xx]["Fecha de muerte"]) {
                 datacol.death++;
             }
-            if(cx[xx]["Fecha recuperado"]){
+            if (cx[xx]["Fecha recuperado"]) {
                 datacol.recover++;
             }
         }
-        datacol.past = datacol.death+datacol.recover;
-        datacol.active = datacol.cases-datacol.past;
-        newdato ="<h2>"+datumTxt(datacol)+"</h2><p>"+datumTxt1(datacol)+"</p><p>"+datumTxt2(datacol)+"</p>"
+        datacol.past = datacol.death + datacol.recover;
+        datacol.active = datacol.cases - datacol.past;
+        newdato = "<h2>" + datumTxt(datacol) + "</h2><p>" + datumTxt1(datacol) + "</p><p>" + datumTxt2(datacol) + "</p>"
     }
-    if(selectedDatum.cases != undefined){
-        newdato ="<h2>"+datumTxt(selectedDatum)+"</h2><p>"+datumTxt1(selectedDatum)+"</p><p>"+datumTxt2(selectedDatum)+"</p>"
+    if (selectedDatum.cases != undefined) {
+        newdato = "<h2>" + datumTxt(selectedDatum) + "</h2><p>" + datumTxt1(selectedDatum) + "</p><p>" + datumTxt2(selectedDatum) + "</p>"
     }
     dao.html(newdato)
 }
@@ -120,7 +131,7 @@ let renderMap = function(topo, rawData, ledim) {
     //Here we finish with the data, time to add all binders
 
     var drawViz = function(vtype) {
-    console.log("Redrawing viz")
+        console.log("Redrawing viz")
         var bg = d3.select("#background")
         var svg = d3.select("#mapsvg")
         console.log(width, height)
@@ -168,8 +179,8 @@ let renderMap = function(topo, rawData, ledim) {
             // draw each country
             .attr("d", mypath)
             // set the color of each country
-            .attr("id", function(d){
-                return "mpio"+d.properties["MPIO_CCDGO"]
+            .attr("id", function(d) {
+                return "mpio" + d.properties["MPIO_CCDGO"]
             })
             .attr("fill", function(d) {
                 //console.log(data.get(d.properties["MPIO_CNMBR"]),d.properties["MPIO_CNMBR"],d)
@@ -201,11 +212,11 @@ let renderMap = function(topo, rawData, ledim) {
 
 
             })
-        if(selectedDatum.cases != undefined){
-            d3.selectAll(".map path").classed("unactive",true);
-            d3.select(".activempio").classed("activempio",false);
-            d3.select("#"+"mpio"+selectedDatum.properties["MPIO_CCDGO"]).classed("activempio",true).classed("unactive",false);
-            d3.select("#"+"mpio"+selectedDatum.properties["MPIO_CCDGO"])
+        if (selectedDatum.cases != undefined) {
+            d3.selectAll(".map path").classed("unactive", true);
+            d3.select(".activempio").classed("activempio", false);
+            d3.select("#" + "mpio" + selectedDatum.properties["MPIO_CCDGO"]).classed("activempio", true).classed("unactive", false);
+            d3.select("#" + "mpio" + selectedDatum.properties["MPIO_CCDGO"])
         }
         drawDatum(rawData);
         bg.on("click", function(d, i) {
@@ -213,8 +224,8 @@ let renderMap = function(topo, rawData, ledim) {
             ledim.filter();
             selectedDatum = {};
             drawDatum(rawData);
-            d3.select(".activempio").classed("activempio",false)
-            d3.selectAll(".map path").classed("unactive",false);
+            d3.select(".activempio").classed("activempio", false)
+            d3.selectAll(".map path").classed("unactive", false);
             dc.redrawAll();
         })
 
@@ -272,10 +283,10 @@ let renderMap = function(topo, rawData, ledim) {
     });
     drawViz(d3.select('input[name="status"]:checked').property("value"));
     window.onresize = function() {
-         width = calcW()[0]
-         w3 = calcW()[1]
-         height = calcW()[2]
-         w2 = calcW()[3]
+        width = calcW()[0]
+        w3 = calcW()[1]
+        height = calcW()[2]
+        w2 = calcW()[3]
         drawViz(d3.select('input[name="status"]:checked').property("value"));
         resizeCharts();
     }
@@ -325,8 +336,8 @@ function ready(error, topology) {
     const all = ndx.groupAll();
     var mpiodim = ndx.dimension(d => d["Ciudad de ubicación"])
     var filterFun = function() {
-        console.log(recchart,mfchart,severechart,crdserieschart,diagchart)
-        console.log("Filtered", ndx.allFiltered(),ndx)
+        console.log(recchart, mfchart, severechart, crdserieschart, diagchart)
+        console.log("Filtered", ndx.allFiltered(), ndx)
         renderMap(topology, ndx.allFiltered([mpiodim]), mpiodim)
     }
     console.log(ndx)
@@ -335,9 +346,9 @@ function ready(error, topology) {
 
     var mfdim = ndx.dimension(d => d.gender)
     var mfg = mfdim.group();
-    var prop = function(d){
-        let val = (Math.round(d.value / ndx.allFiltered().length * 10000) / 100 )
-        return (val?val:0) + "%"
+    var prop = function(d) {
+        let val = (Math.round(d.value / ndx.allFiltered().length * 10000) / 100)
+        return (val ? val : 0) + "%"
     }
     mfchart
         .width(w3)
@@ -363,11 +374,11 @@ function ready(error, topology) {
 
     console.log(ndx.allFiltered().length)
 
-    var coleurs = d3.scaleOrdinal().domain(["ASINTOMÁTICO","FALLECIDO","GRAVE","LEVE","MODERADO",""])
-                          .range(['#01c5c4', '#b8de6f', "#f1e189", "#f39233", "#794c74", "#c56183"])
+    var coleurs = d3.scaleOrdinal().domain(["ASINTOMÁTICO", "FALLECIDO", "GRAVE", "LEVE", "MODERADO", ""])
+        .range(['#01c5c4', '#b8de6f', "#f1e189", "#f39233", "#794c74", "#c56183"])
 
     severechart
-        .width(width*(1/3))
+        .width(width * (1 / 3))
         .height(180)
         .margins({
             top: 20,
@@ -417,11 +428,11 @@ function ready(error, topology) {
 
     //Values of the rungroup
 
-    crdserieschart.width(width*(2/3))
+    crdserieschart.width(width * (2 / 3))
         .height(250)
         .chart(function(c) {
-        var lechart = new dc.LineChart(c).renderArea(true).curve(d3.curveCardinal.tension(0.9))
-        //console.log(lechart,lechart._stack)
+            var lechart = new dc.LineChart(c).renderArea(true).curve(d3.curveCardinal.tension(0.9))
+            //console.log(lechart,lechart._stack)
             return lechart
         })
         .x(d3.scaleLinear().domain([0, 100]))
@@ -458,23 +469,23 @@ function ready(error, topology) {
     var diagGroup = diagDimension.group(d3.timeDay)
     console.log(diagGroup)
     let gall = diagGroup.top(Infinity);
-    let t1 = gall[gall.length-1].key;
+    let t1 = gall[gall.length - 1].key;
     let t2 = gall[0].key;
 
     diagchart.width(width)
-   .height(180)
-   .x(d3.scaleTime().domain([t1,t2]))
-   .elasticY(true)
-   .brushOn(true)
-   .xUnits(d3.timeDays)
-   .dimension(diagDimension)
+        .height(180)
+        .x(d3.scaleTime().domain([t1, t2]))
+        .elasticY(true)
+        .brushOn(true)
+        .xUnits(d3.timeDays)
+        .dimension(diagDimension)
         .yAxisLabel("Casos Semanales")
         .xAxisLabel("Fecha")
-   .group(diagGroup).on('filtered', filterFun);
-   diagchart.yAxis().ticks(3)
+        .group(diagGroup).on('filtered', filterFun);
+    diagchart.yAxis().ticks(3)
     diagchart.render();
 
-    resizeCharts = function(){
+    resizeCharts = function() {
         crdserieschart.width(width)
         diagchart.width(width)
         recchart.width(w3)

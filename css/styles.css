@@ -21,9 +21,13 @@ text.row {
     padding: 5px;
     box-shadow: 1px 1px 3px #0000004d;
     margin: 8px;
+}
+
+.flexy{
+
     display: flex;
     justify-content: space-around;
-}
+    }
 
 body {
     font-family: sans-serif;
