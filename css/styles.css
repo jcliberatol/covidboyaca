@@ -27,7 +27,7 @@ body {
     font-family: sans-serif;
 }
 rect#background:hover {
-    fill: #b8de6f61;
+    fill: #b8de6f11;
 }
 
 .activempio {
@@ -36,4 +36,15 @@ rect#background:hover {
 
 .unactive {
     opacity: 0.5;
+}
+
+#datumcontainer{
+    text-align: center;
+    /* line-height: 1em; */
+    /* box-shadow: 0 0 black; */
+    text-shadow: 1px 1px 2px #3182bd87;
+}
+
+.maptype {
+    text-align: center;
 }

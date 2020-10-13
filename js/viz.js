@@ -18,7 +18,7 @@ function remove_nameless_bins(source_group) {
     return {
         all: function() {
             return source_group.all().filter(function(d) {
-                console.log(d.key)
+                //console.log(d.key)
                 return d.key != "";
             });
         },
@@ -42,16 +42,26 @@ var datumTxt = function(d){
     return capitalizeFirstLetter(d.properties["MPIO_CNMBR"])
 }
 var datumTxt1=function(d){
-return ("(Casos:" + d.cases + ")  (Activos: " + d.active + ")  (Muertes: " + d.death + ")")
+return (
+        (d.cases >0?("(Casos:"    + d.cases  + ")"):"")+
+        (d.active>0?("(Activos: " + d.active + ")"):"")+
+        (d.death >0?("(Muertes: " + d.death  + ")"):"")
+        )
 }
 var datumTxt2=function(d){
-return ("Activos:" + (d.cases > 0 ? Math.round((d.active / d.cases) * 100 * 100) / 100 : 0) + "%   Muertes: " + (d.past > 0 ? Math.round(d.death / d.past * 100 * 100) / 100 : 0) + "%")
+
+let activx=d.active > 0 ?("Activos:" + (d.cases > 0 ? (Math.round(d.active / d.cases * 100 * 100) / 100 ): 0) + "%"):""
+let deatx =d.death  > 0 ?("Muertes:" + (d.past  > 0 ? (Math.round(d.death  / d.past  * 100 * 100) / 100 ): 0) + "%"):""
+console.log(d.active,d.death,activx,deatx)
+return (activx+"   "+deatx)
 }
 var drawDatum = function(){
     var dao = d3.select("#datumContainer")
     dao.html("");
-    if(selectedDatum.cases){
-        dao.html("<h2>"+datumTxt(selectedDatum)+"</h2><p>"+datumTxt1(selectedDatum)+"</p><p>"+datumTxt2(selectedDatum)+"</p>")
+    if(selectedDatum.cases != undefined){
+    let newdato ="<h2>"+datumTxt(selectedDatum)+"</h2><p>"+datumTxt1(selectedDatum)+"</p><p>"+datumTxt2(selectedDatum)+"</p>"
+    console.log(newdato)
+        dao.html(newdato)
     }
 }
 let renderMap = function(topo, rawData, ledim) {
@@ -163,7 +173,7 @@ let renderMap = function(topo, rawData, ledim) {
                 let town = datumTxt(d)
                 ledim.filter();
                 ledim.filter(town)
-                console.log(d)
+                //console.log(d)
 
                 d3.selectAll(".map path").classed("unactive",true);
                 d3.select(".activempio").classed("activempio",false);
@@ -238,7 +248,7 @@ let renderMap = function(topo, rawData, ledim) {
     buttons.on('change', function(d) {
         drawViz(this.value);
     });
-    drawViz("cases");
+    drawViz(d3.select('input[name="status"]:checked').property("value"));
     window.onresize = function() {
          width = calcW()[0]
          w3 = calcW()[1]
