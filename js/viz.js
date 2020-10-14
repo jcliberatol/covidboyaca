@@ -378,7 +378,7 @@ function ready(error, topology) {
         .range(['#01c5c4', '#b8de6f', "#f1e189", "#f39233", "#794c74", "#c56183"])
 
     severechart
-        .width(width * (1 / 3))
+        .width(width>1000?width * (1 / 3.5):width)
         .height(180)
         .margins({
             top: 20,
@@ -428,7 +428,7 @@ function ready(error, topology) {
 
     //Values of the rungroup
 
-    crdserieschart.width(width * (2 / 3))
+    crdserieschart.width(width>1000?width * (2 / 3.5):width)
         .height(250)
         .chart(function(c) {
             var lechart = new dc.LineChart(c).renderArea(true).curve(d3.curveCardinal.tension(0.9))
