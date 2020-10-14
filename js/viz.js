@@ -29,7 +29,7 @@ var calcW = function() {
     let ell = d3.select(".main-content").node()
     let inwi = innerWidth * 0.8
     if (ell) {
-        inwi = ell.getBoundingClientRect().width - 200
+        inwi = ell.getBoundingClientRect().width *0.8
     }
     let wd = inwi
     let wd3 = wd / 3 > 200 ? (wd / 3) - 35 : wd > 180 ? 180 : wd;
